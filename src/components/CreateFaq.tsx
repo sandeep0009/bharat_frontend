@@ -10,6 +10,7 @@ import { Editor } from "./Editor";
 import { Input } from "./ui/input";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { axiosInstance } from "@/lib/axiosInstance";
 
 interface CreateFaqProps {
     handleCloseModal: () => void;
@@ -20,6 +21,7 @@ export const CreateFaq = ({ handleCloseModal }: CreateFaqProps) => {
     const [answer, setAnswer] = useState<string>("");
     const [languages, setLanguages] = useState<string[]>([]);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+    const adminKey=localStorage.getItem('adminKey');
 
     const handleAddLanguage = () => {
         if (selectedLanguage && !languages.includes(selectedLanguage)) {
@@ -31,13 +33,23 @@ export const CreateFaq = ({ handleCloseModal }: CreateFaqProps) => {
         setLanguages(languages.filter(language => language !== lang));
     };
 
-    const handleSubmit = () => {
-        const faqData = {
-            question,
-            answer,
-            languages,
-        };
-        console.log("FAQ Data to submit:", faqData);
+    const handleSubmit =async () => {
+        try {
+            const res=await axiosInstance.post('/create-faq',{question,answer,lng:languages},{
+                headers:{
+                    adminKey:adminKey
+                }
+               });
+               if(res.status===201){
+                alert('created successfully');
+                handleCloseModal();
+               }
+            
+        } catch (error) {
+            alert(error);
+            
+        }
+      
     };
 
     const isSubmitDisabled = languages.length < 2;

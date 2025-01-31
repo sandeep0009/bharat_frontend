@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CreateFaq } from "@/components/CreateFaq";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Eye, Trash2 } from "lucide-react";
+import { axiosInstance } from "@/lib/axiosInstance";
 
 interface FAQ {
     id: number;
@@ -28,6 +29,15 @@ export const Admin = () => {
     const handleDeleteFaq = (id: number) => {
         setFaqs(faqs.filter(faq => faq.id !== id));
     };
+
+    const handleGetFaq=async()=>{
+        const res=await axiosInstance.get('/faq/?lng=hi');
+        console.log(res.data.faqWithTranslation);
+    }
+
+    useEffect(()=>{
+        handleGetFaq()
+    },[])
 
     return (
         <div className="max-w-4xl m-auto p-6">
